@@ -1,0 +1,124 @@
+<!--suppress ALL -->
+<html>
+<head>
+
+</head>
+
+<body>
+
+<canvas id="main" width="400" height="400" style="border:1px solid #d3d3d3;">
+
+</canvas>
+
+</body>
+
+<script>
+    const c      = document.getElementById("main");
+    const ctx    = c.getContext("2d");
+    const length = 10;//长(单位是格子
+    const wide   = 8;//宽 (同上
+    const border = 20;//单个块的边长设定为10px
+
+    ctx.strokeStyle="black";
+    ctx.moveTo(0,0);
+
+    class Environment{
+
+        constructor(ctx){
+            this.ctx = ctx;
+            this.leftX = 80;
+            this.leftY = 80;
+        }
+
+        getX(){
+            return this.leftX
+        }
+        getY(){
+            return this.leftY
+        }
+
+        getCtx(){
+            return this.ctx;
+        }
+
+        line(x1,y1,x2,y2){
+            ctx.beginPath();
+            this.moveTo(parseInt(x1),parseInt(y1));
+            const canvas = this.getCtx();
+            canvas.lineTo(parseInt(x2),parseInt(y2));
+            canvas.stroke();
+            ctx.fill();
+        }
+
+        rect(x1,y1,x2,y2){
+            let canvas = this.getCtx();
+            canvas.fillRect(x1,y1,x2,y2);
+        }
+
+        moveTo(x,y){
+            this.getCtx().moveTo(x,y);
+        }
+
+        setFillColor(color){
+            let ctx = this.getCtx();
+            ctx.strokeStyle = color;
+            ctx.save();
+        }
+
+    }
+
+    class Game extends Environment{
+
+        constructor(ctx){
+            super(ctx);
+            this.init_board();
+        }
+
+        init_board(){
+            const gameArray = new Array();
+            for (let i = 0;i<length;i++){
+                gameArray[i] = new Array();
+            }
+            for (let i = 0;i<length;i++){
+                for (let j = 0;j<wide;j++){
+                    gameArray[i][j] = 0;
+                }
+            }
+            this.gameArray = gameArray;
+        }
+
+        draw_back_ground(){
+            //棋盘左上角的坐标
+            const x = super.getX();
+            const y = super.getY();
+            //计算一下棋盘右下角的坐标
+            let rigthPosX = x + length * border;
+            let rightPosY = y + wide   * border;
+            //画竖线
+            for (let i = 0;i<(rigthPosX-x)/20 +1;i++){
+                super.line(x+i*border,y,x+i*border,rightPosY);
+            }
+            //画横线
+            for (let j = 0;j<(rightPosY-y)/20 + 1;j++){
+                super.line(x,y+j*border,rigthPosX,y+j*border);
+            }
+        }
+
+        draw_block(x1,y1,x2,y2){
+            super.rect(x1,y1,x2,y2);
+        }
+
+        start(){
+            this.draw_back_ground();
+
+        }
+
+    }
+
+    let game = new Game(ctx);
+    game.draw_back_ground();
+    game.draw_block(80,80,20,20)
+
+</script>
+
+</html>
